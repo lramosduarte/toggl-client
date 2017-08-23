@@ -1,3 +1,4 @@
+import os
 import yaml
 
 from exceptions import ArquivoCOnfiguracaoNaoEncontrado
@@ -16,7 +17,8 @@ VARIAVEIS_TOGGL = {
     }
 }
 
-PATH_ARQUIVO_CONFIGURACAO = 'configuracoes.yml'
+USUARIO_ATIVO_SISTEMA = os.environ['USER']
+PATH_ARQUIVO_CONFIGURACAO = '/home/{user}/configuracoes.yml'.format(user=USUARIO_ATIVO_SISTEMA)
 
 
 def carrega_configuracoes():

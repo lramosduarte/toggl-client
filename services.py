@@ -20,7 +20,7 @@ class GerenciadorTarefas:
                                             endpoint='time_entries/current')
         resposta = requests.get(url, auth=basic_auth(self.configuracao))
         tarefa = json.loads(resposta.content.decode('utf8'))
-        return tarefa['data']
+        return tarefa['data']['id']
 
     def finaliza_tarefa(self):
         tarefa_id = self.pega_tarefa_ativa()
