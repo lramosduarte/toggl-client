@@ -28,9 +28,7 @@ def adiciona_argumentos(parser):
     return args
 
 
-def main():
-    parser = inicia_argparser()
-    argumentos = adiciona_argumentos(parser)
+def verifica_operacao(argumentos):
     if argumentos.configurar:
         configura()
         return
@@ -44,9 +42,11 @@ def main():
         raise TarefaAtivaException(('Ja existe uma tarefa ativa, finalize essa tarefa antes de'
                                     ' iniciar outra'))
     payload = Payload(argumentos)
-    gerenciador.inicia_tarefa_toggl(TOGGL_ENDPOINTS['INICIAR_CONTADOR'], payload.gera_mensagem())
+    gerenciador.inicie_tarefa(TOGGL_ENDPOINTS['INICIAR_CONTADOR'], payload.gera_mensagem())
     print('Tarefa iniciada')
 
 
 if __name__ == "__main__":
-    main()
+    parser = inicia_argparser()
+    argumentos = adiciona_argumentos(parser)
+    verifica_operacao(argumentos)

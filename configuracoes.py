@@ -18,7 +18,10 @@ VARIAVEIS_TOGGL = {
 }
 
 USUARIO_ATIVO_SISTEMA = os.environ['USER']
-PATH_ARQUIVO_CONFIGURACAO = '/home/{user}/configuracoes.yml'.format(user=USUARIO_ATIVO_SISTEMA)
+PATH_CONFIGURACOES = '/home/{user}/.config/toggl-client'.format(user=USUARIO_ATIVO_SISTEMA)
+NOME_ARQUIVO_CONFIGURACAO = 'configuracoes.yml'
+PATH_ARQUIVO_CONFIGURACAO = '{}/{}'.format(PATH_CONFIGURACOES, NOME_ARQUIVO_CONFIGURACAO)
+PATH_CACHE = '%s/cache.tmp' % PATH_CONFIGURACOES
 
 
 def carrega_configuracoes():
@@ -31,7 +34,13 @@ def carrega_configuracoes():
     return configuracoes
 
 
+def cria_diretorio_de_configuracoes():
+    if not os.path.exists(PATH_CONFIGURACOES):
+        os.makedirs(PATH_CONFIGURACOES)
+
+
 def configura():
+    cria_diretorio_de_configuracoes()
     with open(PATH_ARQUIVO_CONFIGURACAO, 'w') as stream:
         configuracoes = {
             'toggl_api': {var: None for var in VARIAVEIS_TOGGL['toggl_api'].keys()}
