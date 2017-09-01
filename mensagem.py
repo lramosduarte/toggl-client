@@ -1,4 +1,4 @@
-from subprocess import Popen, PIPE
+from subprocess import getoutput
 
 
 class Payload:
@@ -29,6 +29,6 @@ class Payload:
             self.mensagem['time_entry']['tags'] = self.argumentos.tags
 
     def __pega_nome_branch_ativa(self):
-        saida = Popen(['git', 'branch'], stdout=PIPE).stdout.read()
-        nome_branch = saida.decode('utf8')[2:-1]
+        saida = getoutput('git branch | grep ^\*')
+        nome_branch = saida[2:]
         return nome_branch

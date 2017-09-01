@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from configuracoes import TOGGL_ENDPOINTS, configura, carrega_configuracoes
 from exceptions import TarefaAtivaException
 from mensagem import Payload
-from services import GerenciadorTarefas
+from services import GeraArquivoCsv, GerenciadorTarefas
 
 
 def inicia_argparser():
@@ -23,7 +23,11 @@ def adiciona_argumentos(parser):
     parser.add_argument('--branch', '-b', action='store_true',
                         help='Pega o nome da branch ativo para usar como nome da tarefa.')
     parser.add_argument('--tags', '-t', nargs='*',
-                        help='Informe o nome do projeto que sera dono dessa tarefa')
+                        help='Informe nome de tags que podem te ajudar a organizar suas tarefas')
+    parser.add_argument('--relatorio', '-r', nargs='*',
+                        help=('Informe uma data de inicio e fim seguindo o padrão: '
+                              'DD/MM/YYYY-DD/MM/YYYY(INICIO-FIM). OBS.: Se nenhum parêmetro'
+                              ' for informado o programa ira retornar as tarefas do dia atual.'))
     args = parser.parse_args()
     return args
 
@@ -33,7 +37,11 @@ def verifica_operacao(argumentos):
         configura()
         return
     configuracao = carrega_configuracoes()
-    gerenciador = GerenciadorTarefas(argumentos, configuracao)
+    gerenciador = GerenciadorTarefas(configuracao)
+    if argumentos.relatorio is not None:
+        relatorio = gerenciador.relatorio_tarefas(argumentos.relatorio)
+        GeraArquivoCsv(relatorio, campos=('description', 'start', 'stop')).gera_arquivo()
+        return
     if argumentos.finalizar:
         gerenciador.finaliza_tarefa()
         print('Tarefa encerrada')

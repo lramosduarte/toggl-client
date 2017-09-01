@@ -7,6 +7,7 @@ from exceptions import ArquivoCOnfiguracaoNaoEncontrado
 TOGGL_ENDPOINTS = {
     'INICIAR_CONTADOR': 'time_entries/start',
     'ENCERRAR_CONTADOR': 'time_entries/{tarefa_id}/stop',
+    'LISTAR_ENTRADAS_TEMPO': 'time_entries?start_date={inicio}&end_date={fim}',
 }
 
 VARIAVEIS_TOGGL = {

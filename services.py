@@ -1,3 +1,5 @@
+import arrow
+import csv
 import json
 import os
 import requests
@@ -12,8 +14,7 @@ def basic_auth(configuracao):
 
 class GerenciadorTarefas:
 
-    def __init__(self, argumentos, configuracao):
-        self.argumentos = argumentos
+    def __init__(self, configuracao):
         self.configuracao = configuracao
 
         self.cache = self.ler_cache()
@@ -42,6 +43,33 @@ class GerenciadorTarefas:
             stream = arquivo_cache.read()
         return json.loads(stream.decode('utf8'))
 
+    def normaliza_data(self, periodo):
+        if periodo:
+            datas = periodo.split('-')
+            data_inicio = arrow.get(datas[0], 'DD/MM/YYYY')
+            data_fim = arrow.get(datas[1], 'DD/MM/YYYY')
+        if not periodo:
+            data_inicio = arrow.now().replace(hour=0, minute=0, second=0)
+            data_fim = data_inicio.replace(hour=23, minute=59, second=59)
+        return str(data_inicio), str(data_fim)
+
+    def pega_tarefa_ativa_toggl(self):
+        url = '{url_base}{endpoint}'.format(url_base=self.configuracao['toggl_api']['url_base'],
+                                            endpoint='time_entries/current')
+        self.resposta = requests.get(url, auth=basic_auth(self.configuracao))
+        return json.loads(self.resposta.content.decode('utf8'))
+
+    def relatorio_tarefas(self, periodo):
+        data_inicio, data_fim = self.normaliza_data(periodo)
+        self._relatorio_tarefas_toggl(data_inicio, data_fim)
+        return json.loads(self.resposta.content.decode('utf8'))
+
+    def _relatorio_tarefas_toggl(self, data_inicio, data_fim):
+        endpoint = TOGGL_ENDPOINTS['LISTAR_ENTRADAS_TEMPO'].format(inicio=data_inicio, fim=data_fim)
+        url = '{url_base}{endpoint}'.format(url_base=self.configuracao['toggl_api']['url_base'],
+                                            endpoint=endpoint)
+        self.resposta = requests.get(url, auth=basic_auth(self.configuracao))
+
     def _finaliza_tarefa_toggl(self):
         tarefa_id = self.pega_tarefa_ativa()
         endpoint = TOGGL_ENDPOINTS['ENCERRAR_CONTADOR'].format(tarefa_id=tarefa_id)
@@ -62,8 +90,49 @@ class GerenciadorTarefas:
         if os.path.isfile(PATH_CACHE):
             os.remove(PATH_CACHE)
 
-    def pega_tarefa_ativa_toggl(self):
-        url = '{url_base}{endpoint}'.format(url_base=self.configuracao['toggl_api']['url_base'],
-                                            endpoint='time_entries/current')
-        self.resposta = requests.get(url, auth=basic_auth(self.configuracao))
-        return json.loads(self.resposta.content.decode('utf8'))
+
+class GeraArquivoCsv:
+
+    def __init__(self, dicionarios, campos=None):
+        """Gera um arquivo csv a partir de uma lista de dicionários, opcionalmente você pode
+        informar uma tupla de chaves que pode ser usada para gerar o arquivo csv de acordo
+        a essa tupla.
+
+        Args:
+            dicionarios (list(dict)): Dados que vão ser utilizados
+            campos (tuple)(OPCIONAL): Tupla contendo lista de chaves que serão as colunas do
+                arquivo csv.
+        """
+        self.dicionarios = dicionarios
+        self.campos = campos
+
+        self._gera_campos()
+
+    def gera_arquivo(self):
+        arquivo_csv = open('relatorio.csv', 'w+')
+        self._escreve_arquivo(arquivo_csv)
+        arquivo_csv.close()
+
+    def _escreve_arquivo(self, arquivo_csv):
+        writer = csv.DictWriter(arquivo_csv, fieldnames=self.campos)
+        writer.writeheader()
+        for dicionario in self.dicionarios:
+            dados = {}
+            for chave in self.campos:
+                try:
+                    if chave in ('start', 'stop'):
+                        dados[chave] = self._extrai_tempo(dicionario[chave])
+                        continue
+                    dados[chave] = dicionario[chave]
+                except KeyError:
+                    dados[chave] = 'sem valor informado para %s' % chave
+            writer.writerow(dados)
+
+    def _extrai_tempo(self, datetime_str):
+        datetime_brasil = arrow.get(datetime_str).to('America/Sao_Paulo')
+        return str(datetime_brasil.time())
+
+    def _gera_campos(self):
+        if self.campos:
+            return
+        self.campos = tuple(self.dicionarios[0].keys())
