@@ -93,7 +93,14 @@ class GerenciadorTarefas:
 
 class GeraArquivoCsv:
 
-    def __init__(self, dicionarios, campos=None):
+    MAPEAMENTO_CAMPOS = {
+        'Data': 'start',
+        'Descrição': 'description',
+        'Inicio': 'start',
+        'Fim': 'stop',
+    }
+
+    def __init__(self, dicionarios):
         """Gera um arquivo csv a partir de uma lista de dicionários, opcionalmente você pode
         informar uma tupla de chaves que pode ser usada para gerar o arquivo csv de acordo
         a essa tupla.
@@ -104,9 +111,6 @@ class GeraArquivoCsv:
                 arquivo csv.
         """
         self.dicionarios = dicionarios
-        self.campos = campos
-
-        self._gera_campos()
 
     def gera_arquivo(self):
         arquivo_csv = open('relatorio.csv', 'w+')
@@ -114,25 +118,30 @@ class GeraArquivoCsv:
         arquivo_csv.close()
 
     def _escreve_arquivo(self, arquivo_csv):
-        writer = csv.DictWriter(arquivo_csv, fieldnames=self.campos)
+        writer = csv.DictWriter(arquivo_csv, fieldnames=('Data', 'Descrição', 'Inicio', 'Fim'))
         writer.writeheader()
         for dicionario in self.dicionarios:
-            dados = {}
-            for chave in self.campos:
-                try:
-                    if chave in ('start', 'stop'):
-                        dados[chave] = self._extrai_tempo(dicionario[chave])
-                        continue
-                    dados[chave] = dicionario[chave]
-                except KeyError:
-                    dados[chave] = 'sem valor informado para %s' % chave
+            dados = self._pega_dados_dicionario(dicionario)
             writer.writerow(dados)
+
+    def _extrai_dia(self, datetime_str):
+        datetime_brasil = arrow.get(datetime_str).to('America/Sao_Paulo')
+        return str(datetime_brasil.strftime('%d/%m/%Y'))
 
     def _extrai_tempo(self, datetime_str):
         datetime_brasil = arrow.get(datetime_str).to('America/Sao_Paulo')
         return str(datetime_brasil.time())
 
-    def _gera_campos(self):
-        if self.campos:
-            return
-        self.campos = tuple(self.dicionarios[0].keys())
+    def _pega_dados_dicionario(self, dicionario):
+        dados = {}
+        for chave, valor in self.MAPEAMENTO_CAMPOS.items():
+            if chave == 'Data':
+                dados[chave] = self._extrai_dia(dicionario[valor])
+            elif chave in ('Inicio', 'Fim'):
+                dados[chave] = self._extrai_tempo(dicionario[valor])
+            else:
+                try:
+                    dados[chave] = dicionario[valor]
+                except KeyError:
+                    dados[chave] = 'sem valor informado para %s' % valor
+        return dados

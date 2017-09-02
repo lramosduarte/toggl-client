@@ -40,7 +40,7 @@ def verifica_operacao(argumentos):
     gerenciador = GerenciadorTarefas(configuracao)
     if argumentos.relatorio is not None:
         relatorio = gerenciador.relatorio_tarefas(argumentos.relatorio)
-        GeraArquivoCsv(relatorio, campos=('description', 'start', 'stop')).gera_arquivo()
+        GeraArquivoCsv(relatorio).gera_arquivo()
         return
     if argumentos.finalizar:
         gerenciador.finaliza_tarefa()
