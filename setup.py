@@ -15,7 +15,7 @@ lista_dependencias = [str(objeto.req) for objeto in lista_objetos_dependencias]
 setup(
     name='toggl-client',
     packages=["client"],
-    version='0.1.0',
+    version='0.1.1',
     description='Cliente para a toggl API',
     long_description=long_description,
     url='https://github.com/lramosduarte/toggl-client',
@@ -28,6 +28,8 @@ setup(
             'tgc = client.main:main',
         ]
     },
+
+    data_files=['requirements.txt'],
 
     classifiers=[
         'Development Status :: 4 - Beta',

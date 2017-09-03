@@ -4,3 +4,7 @@ venv/
 
 configuracoes.yaml
 relatorio.csv
+
+*-info
+dist/
+build/
