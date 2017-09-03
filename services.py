@@ -45,13 +45,13 @@ class GerenciadorTarefas:
 
     def normaliza_data(self, periodo):
         if periodo:
-            datas = periodo.split('-')
-            data_inicio = arrow.get(datas[0], 'DD/MM/YYYY')
-            data_fim = arrow.get(datas[1], 'DD/MM/YYYY')
+            datas = str(periodo).split('-')
+            data_inicio = arrow.get(datas[0], 'DD/MM/YYYY').to('America/Sao_Paulo')
+            data_fim = arrow.get(datas[1], 'DD/MM/YYYY').to('America/Sao_Paulo')
         if not periodo:
             data_inicio = arrow.now().replace(hour=0, minute=0, second=0)
             data_fim = data_inicio.replace(hour=23, minute=59, second=59)
-        return str(data_inicio), str(data_fim)
+        return data_inicio.isoformat(), data_fim.isoformat()
 
     def pega_tarefa_ativa_toggl(self):
         url = '{url_base}{endpoint}'.format(url_base=self.configuracao['toggl_api']['url_base'],
