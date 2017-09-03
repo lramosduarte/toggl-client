@@ -5,7 +5,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 
-from configuracoes import TOGGL_ENDPOINTS, PATH_CACHE
+from .configuracoes import TOGGL_ENDPOINTS, PATH_CACHE
 
 
 def basic_auth(configuracao):

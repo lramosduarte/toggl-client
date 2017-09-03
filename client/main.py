@@ -1,9 +1,9 @@
 from argparse import ArgumentParser
 
-from configuracoes import TOGGL_ENDPOINTS, configura, carrega_configuracoes
-from exceptions import TarefaAtivaException
-from mensagem import Payload
-from services import GeraArquivoCsv, GerenciadorTarefas
+from .configuracoes import TOGGL_ENDPOINTS, configura, carrega_configuracoes
+from .exceptions import TarefaAtivaException
+from .mensagem import Payload
+from .services import GeraArquivoCsv, GerenciadorTarefas
 
 
 def inicia_argparser():
@@ -15,7 +15,7 @@ def inicia_argparser():
 
 def adiciona_argumentos(parser):
     parser.add_argument('nome_tarefa', nargs='?', default=None,
-                        help='Inicia uma nova tarefa no toogle')
+                        help='Inicia uma nova tarefa no toggl')
     parser.add_argument('--finalizar', '-f', action='store_true',
                         help='Finaliza a tarefa ativa')
     parser.add_argument('--configurar', action='store_true',
@@ -54,7 +54,11 @@ def verifica_operacao(argumentos):
     print('Tarefa iniciada')
 
 
-if __name__ == "__main__":
+def main():
     parser = inicia_argparser()
     argumentos = adiciona_argumentos(parser)
     verifica_operacao(argumentos)
+
+
+if __name__ == "__main__":
+    main()

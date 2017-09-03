@@ -1,7 +1,7 @@
-## Toggl-Client
+Toggle API Client
+=======================
 
-toggl-client é um cliente CLI para a api do [TOGGL](https://toggl.com/).
-
+Um cliente simples para algumas funcionalidades básicas da api da [TOGGL](https://toggl.com)
 
 #### Configuração inicial
 
@@ -54,6 +54,7 @@ Finalizar uma tarefa:
 - [x] tags
 - [ ] tests
 - [ ] Cache(Diminuir alguns requests e aumentar o desempenho)
-- [ ] Arquivo de configuração em pasta do sistema
-- [ ] SETUP
-- [ ] PIP install
+    * Foi implementado de algumas funcionalidades
+- [x] Arquivo de configuração em pasta do sistema
+- [x] SETUP
+- [x] PIP install

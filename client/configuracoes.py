@@ -1,7 +1,7 @@
 import os
 import yaml
 
-from exceptions import ArquivoCOnfiguracaoNaoEncontrado
+from .exceptions import ArquivoCOnfiguracaoNaoEncontrado
 
 
 TOGGL_ENDPOINTS = {

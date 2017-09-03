@@ -1,4 +1,6 @@
 venv/
 *pycache*
 *.pyc
+
 configuracoes.yaml
+relatorio.csv

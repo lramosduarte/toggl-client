@@ -2,7 +2,7 @@ from subprocess import getoutput
 
 
 class Payload:
-    CRIADO_COM = 'toogl-client'
+    CRIADO_COM = 'toggl-client'
 
     def __init__(self, argumentos):
         self.argumentos = argumentos
