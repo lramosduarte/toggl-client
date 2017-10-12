@@ -46,8 +46,8 @@ class GerenciadorTarefas:
     def normaliza_data(self, periodo):
         if periodo:
             datas = str(periodo).split('-')
-            data_inicio = arrow.get(datas[0], 'DD/MM/YYYY').to('America/Sao_Paulo')
-            data_fim = arrow.get(datas[1], 'DD/MM/YYYY').to('America/Sao_Paulo')
+            data_inicio = arrow.get(datas[0], 'DD/MM/YYYY').to('America/Sao_Paulo').floor('day')
+            data_fim = arrow.get(datas[1], 'DD/MM/YYYY').to('America/Sao_Paulo').ceil('day')
         if not periodo:
             data_inicio = arrow.now().replace(hour=0, minute=0, second=0)
             data_fim = data_inicio.replace(hour=23, minute=59, second=59)
