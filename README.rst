@@ -53,6 +53,7 @@ Finalizar uma tarefa:
 - [x] Branch ativa
 - [x] tags
 - [ ] tests
+- [ ] Nome do projeto
 - [ ] Cache(Diminuir alguns requests e aumentar o desempenho)
     * Foi implementado de algumas funcionalidades
 - [x] Arquivo de configuração em pasta do sistema
